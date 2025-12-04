@@ -2,16 +2,23 @@
 
 namespace App\Controllers;
 
-use App\DB;
 use App\Models\Post;
 use App\Models\User;
 
-class PostsController
+class PostController
 {
+    public function __construct()
+    {
+        if(!auth()){
+            redirect('/login');
+            die;
+        }
+    }
+
     public function index()
     {
-       $posts = Post::all();
-       view('posts/index', compact('posts'));
+        $posts = Post::all();
+        view('posts/index', compact('posts'));
     }
 
     public function create() {
@@ -19,6 +26,16 @@ class PostsController
     }
 
     public function store() {
+        for($i = 0; $i<count($_FILES['image']['name']); $i++){
+            do {
+                $from = $_FILES['image']['tmp_name'][$i];
+                $uploadsDir = __DIR__ . '/../../public/uploads/';
+                $ext = pathinfo($_FILES['image']['name'][$i], PATHINFO_EXTENSION);
+                $name = md5($_FILES['image']['name'][$i] . microtime() . rand(PHP_INT_MIN, PHP_INT_MAX)) . '.' . $ext;
+                $to = $uploadsDir . $name;
+            } while(file_exists($to));
+            move_uploaded_file($from, $to);
+        }
         $post = new Post();
         $post->title = $_POST['title'];
         $post->body = $_POST['body'];
@@ -31,7 +48,7 @@ class PostsController
         view('posts/view', compact('post'));
     }
 
-    public function edit() {
+    public function edit(){
         $post = Post::find($_GET['id']);
         view('posts/edit', compact('post'));
     }
@@ -44,7 +61,7 @@ class PostsController
         redirect('/posts');
     }
 
-    public function destroy() {
+    public function destroy(){
         $post = Post::find($_GET['id']);
         $post->delete();
         redirect('/posts');

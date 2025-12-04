@@ -1,15 +1,18 @@
 <?php
 
-function dump(...$args) {
-    echo '<pre>';
-    var_dump(...$args);
-    echo '</pre>';
-}
+use App\Models\User;
 
-function dd(...$args) {
-    dump(...$args);
-    die;
-}
+// function dump(...$args)
+// {
+//     echo '<pre>';
+//     var_dump(...$args);
+//     echo '</pre>';
+// }
+
+// function dd(...$args) {
+//     dump(...$args);
+//     die;
+// }
 
 function view($viewName, $variables=[]) {
     extract($variables);
@@ -19,3 +22,16 @@ function view($viewName, $variables=[]) {
 function redirect($path) {
     header("Location: $path");
 }
+
+function auth() {
+    if(isset($_SESSION['userId'])) {
+        return User::find($_SESSION['userId']);
+    }
+    return false;
+}
+function dump($var) {
+    echo '<pre>';
+    var_dump($var);
+    echo '</pre>';
+}
+

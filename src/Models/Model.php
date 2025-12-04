@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 namespace App\Models;
 
 use App\DB;
 
 abstract class Model {
-    public static $table;
     public $id;
+    public static $table;
 
     public static function all(){
         $db = new DB();
@@ -18,15 +18,20 @@ abstract class Model {
         return $db->find(static::$table, static::class, $id);
     }
 
-    public function save(){
+    public static function where($field, $value){
         $db = new DB();
+        return $db->where(static::$table, static::class, $field, $value);
+    }
+
+    public function save() {
         $fields = get_object_vars($this);
         unset($fields['id']);
+        $db = new DB();
         if($this->id) {
-            $db->update(static::$table, $fields, $this->id);
+           $db->update(static::$table, $fields, $this->id);
         } else {
-            $db->insert(static::$table, $fields);
-        }
+           $db->insert(static::$table, $fields);
+        }   
     }
     public function delete() {
         $db = new DB();
