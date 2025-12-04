@@ -23,7 +23,6 @@ if($match){
         $method = $match['action'][1];
         $controller->$method();
     }
-    
 } else {
     echo '<img src="https://http.cat/404">';
 }
